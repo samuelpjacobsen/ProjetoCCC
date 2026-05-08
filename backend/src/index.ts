@@ -6,6 +6,8 @@ import alunosRoutes from "./routes/alunos.js";
 import tutoresRoutes from "./routes/tutores.js";
 import oficinasRoutes from "./routes/oficinas.js";
 import matriculasRoutes from "./routes/matriculas.js";
+import aulasRoutes from "./routes/aulas.js";
+import presencasRoutes from "./routes/presencas.js";
 import { authMiddleware } from "./middleware/auth.js";
 
 dotenv.config();
@@ -25,6 +27,8 @@ app.use("/api/alunos", authMiddleware, alunosRoutes);
 app.use("/api/tutores", authMiddleware, tutoresRoutes);
 app.use("/api/oficinas", authMiddleware, oficinasRoutes);
 app.use("/api/matriculas", authMiddleware, matriculasRoutes);
+app.use("/api/aulas", authMiddleware, aulasRoutes);
+app.use("/api/presencas", authMiddleware, presencasRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
