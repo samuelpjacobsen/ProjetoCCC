@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Plus, BookOpen, Calendar, Users, Trash2 } from "lucide-react";
@@ -134,13 +134,11 @@ export default function OficinasPage() {
           <h1 className="text-3xl font-bold">Oficinas</h1>
           <p className="text-muted-foreground">Gerencie as oficinas do projeto ELLP</p>
         </div>
+        <Button onClick={() => { setForm(emptyForm); setEditId(null); setOpen(true); }}>
+          <Plus className="h-4 w-4 mr-2" />
+          Nova oficina
+        </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={() => { setForm(emptyForm); setEditId(null); setOpen(true); }}>
-              <Plus className="h-4 w-4 mr-2" />
-              Nova oficina
-            </Button>
-          </DialogTrigger>
           <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{editId ? "Editar oficina" : "Nova oficina"}</DialogTitle>
@@ -156,7 +154,7 @@ export default function OficinasPage() {
               </div>
               <div className="space-y-2">
                 <Label>Professor responsável *</Label>
-                <Select value={form.professor_id} onValueChange={(v) => setForm({ ...form, professor_id: v })}>
+                <Select value={form.professor_id} onValueChange={(v) => setForm({ ...form, professor_id: v || "" })}>
                   <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
                   <SelectContent>
                     {profiles.map((p) => (
@@ -168,7 +166,7 @@ export default function OficinasPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Status</Label>
-                  <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                  <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v || "planejada" })}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {Object.entries(statusLabels).map(([k, v]) => (

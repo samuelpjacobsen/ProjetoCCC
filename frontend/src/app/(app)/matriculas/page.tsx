@@ -5,7 +5,7 @@ import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -89,13 +89,11 @@ export default function MatriculasPage() {
           <h1 className="text-3xl font-bold">Matrículas</h1>
           <p className="text-muted-foreground">Vincule alunos às oficinas</p>
         </div>
+        <Button onClick={() => setOpen(true)}>
+          <Plus className="h-4 w-4 mr-2" />
+          Nova matrícula
+        </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nova matrícula
-            </Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Nova matrícula</DialogTitle>
@@ -103,7 +101,7 @@ export default function MatriculasPage() {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label>Aluno *</Label>
-                <Select value={form.aluno_id} onValueChange={(v) => setForm({ ...form, aluno_id: v })}>
+                <Select value={form.aluno_id} onValueChange={(v) => setForm({ ...form, aluno_id: v || "" })}>
                   <SelectTrigger><SelectValue placeholder="Selecione o aluno..." /></SelectTrigger>
                   <SelectContent>
                     {alunos.map((a) => (
@@ -114,7 +112,7 @@ export default function MatriculasPage() {
               </div>
               <div className="space-y-2">
                 <Label>Oficina *</Label>
-                <Select value={form.oficina_id} onValueChange={(v) => setForm({ ...form, oficina_id: v })}>
+                <Select value={form.oficina_id} onValueChange={(v) => setForm({ ...form, oficina_id: v || "" })}>
                   <SelectTrigger><SelectValue placeholder="Selecione a oficina..." /></SelectTrigger>
                   <SelectContent>
                     {oficinas.map((o) => (
@@ -132,7 +130,7 @@ export default function MatriculasPage() {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-4">
-            <Select value={filter} onValueChange={setFilter}>
+            <Select value={filter} onValueChange={(v) => setFilter(v || "all")}>
               <SelectTrigger className="w-[250px]"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as oficinas</SelectItem>

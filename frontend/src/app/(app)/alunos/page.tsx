@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Pencil, Trash2, Search, Users } from "lucide-react";
 
@@ -96,13 +96,11 @@ export default function AlunosPage() {
           <h1 className="text-3xl font-bold">Alunos</h1>
           <p className="text-muted-foreground">Gerencie os alunos cadastrados no sistema</p>
         </div>
+        <Button onClick={openNew}>
+          <Plus className="h-4 w-4 mr-2" />
+          Novo aluno
+        </Button>
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openNew}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo aluno
-            </Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>{editId ? "Editar aluno" : "Novo aluno"}</DialogTitle>

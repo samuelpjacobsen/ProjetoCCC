@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
@@ -102,7 +102,7 @@ export default function PresencaPage() {
           <div className="flex flex-wrap items-end gap-4">
             <div className="space-y-2 flex-1 min-w-[200px]">
               <Label>Oficina</Label>
-              <Select value={selectedOficina} onValueChange={setSelectedOficina}>
+              <Select value={selectedOficina} onValueChange={(v) => setSelectedOficina(v || "")}>
                 <SelectTrigger><SelectValue placeholder="Selecione a oficina..." /></SelectTrigger>
                 <SelectContent>
                   {oficinas.map((o) => (
@@ -115,7 +115,7 @@ export default function PresencaPage() {
             {selectedOficina && (
               <div className="space-y-2 flex-1 min-w-[200px]">
                 <Label>Aula</Label>
-                <Select value={selectedAula} onValueChange={setSelectedAula}>
+                <Select value={selectedAula} onValueChange={(v) => setSelectedAula(v || "")}>
                   <SelectTrigger><SelectValue placeholder="Selecione a aula..." /></SelectTrigger>
                   <SelectContent>
                     {aulas.map((a) => (
@@ -129,30 +129,30 @@ export default function PresencaPage() {
             )}
 
             {selectedOficina && (
-              <Dialog open={novaAulaOpen} onOpenChange={setNovaAulaOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nova aula
-                  </Button>
-                </DialogTrigger>
-                <DialogContent>
-                  <DialogHeader>
-                    <DialogTitle>Nova aula</DialogTitle>
-                  </DialogHeader>
-                  <form onSubmit={criarAula} className="space-y-4">
-                    <div className="space-y-2">
-                      <Label>Data *</Label>
-                      <Input type="date" value={novaAulaForm.data} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, data: e.target.value })} required />
-                    </div>
-                    <div className="space-y-2">
-                      <Label>Tópico</Label>
-                      <Input placeholder="Ex: Lógica condicional" value={novaAulaForm.topico} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, topico: e.target.value })} />
-                    </div>
-                    <Button type="submit" className="w-full">Criar aula</Button>
-                  </form>
-                </DialogContent>
-              </Dialog>
+              <>
+                <Button variant="outline" onClick={() => setNovaAulaOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Nova aula
+                </Button>
+                <Dialog open={novaAulaOpen} onOpenChange={setNovaAulaOpen}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Nova aula</DialogTitle>
+                    </DialogHeader>
+                    <form onSubmit={criarAula} className="space-y-4">
+                      <div className="space-y-2">
+                        <Label>Data *</Label>
+                        <Input type="date" value={novaAulaForm.data} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, data: e.target.value })} required />
+                      </div>
+                      <div className="space-y-2">
+                        <Label>Tópico</Label>
+                        <Input placeholder="Ex: Lógica condicional" value={novaAulaForm.topico} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, topico: e.target.value })} />
+                      </div>
+                      <Button type="submit" className="w-full">Criar aula</Button>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+              </>
             )}
           </div>
         </CardContent>

@@ -73,7 +73,7 @@ export default function RelatoriosPage() {
 
       <Card>
         <CardHeader>
-          <Select value={filter} onValueChange={setFilter}>
+          <Select value={filter} onValueChange={(v) => setFilter(v || "all")}>
             <SelectTrigger className="w-[250px]"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as oficinas</SelectItem>
