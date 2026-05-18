@@ -1,14 +1,14 @@
 services:
   postgres:
     image: postgres:16-alpine
-    container_name: oficina_ellp_db
+    container_name: ellp-postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: oficina_ellp
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ellp_dev
+      POSTGRES_USER: ellp
+      POSTGRES_PASSWORD: ellp123
     volumes:
       - pgdata:/var/lib/postgresql/data
 

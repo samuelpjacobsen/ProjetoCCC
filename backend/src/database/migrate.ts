@@ -1,9 +1,20 @@
 import pool from "./connection.js";
 
 const migration = `
-  CREATE TYPE IF NOT EXISTS app_role AS ENUM ('admin', 'professor');
-  CREATE TYPE IF NOT EXISTS oficina_status AS ENUM ('planejada', 'em_andamento', 'concluida', 'cancelada');
-  CREATE TYPE IF NOT EXISTS matricula_status AS ENUM ('ativa', 'aprovado', 'reprovado', 'desistente');
+  DO $$ BEGIN
+    CREATE TYPE app_role AS ENUM ('admin', 'professor');
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END $$;
+
+  DO $$ BEGIN
+    CREATE TYPE oficina_status AS ENUM ('planejada', 'em_andamento', 'concluida', 'cancelada');
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END $$;
+
+  DO $$ BEGIN
+    CREATE TYPE matricula_status AS ENUM ('ativa', 'aprovado', 'reprovado', 'desistente');
+  EXCEPTION WHEN duplicate_object THEN NULL;
+  END $$;
 
   CREATE TABLE IF NOT EXISTS profiles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
