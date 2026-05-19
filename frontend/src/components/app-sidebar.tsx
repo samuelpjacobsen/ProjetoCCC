@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
@@ -14,6 +15,8 @@ import {
   BarChart3,
   Settings,
   LogOut,
+  Menu,
+  X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -31,12 +34,12 @@ const navItems = [
   { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
 ];
 
-export function AppSidebar() {
+function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
 
   return (
-    <aside className="hidden md:flex w-64 flex-col border-r bg-card h-screen sticky top-0">
+    <>
       <div className="p-6">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-lg bg-primary flex items-center justify-center">
@@ -56,6 +59,7 @@ export function AppSidebar() {
           <Link
             key={item.href}
             href={item.href}
+            onClick={onNavigate}
             className={cn(
               "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
               pathname === item.href
@@ -73,6 +77,7 @@ export function AppSidebar() {
             <Separator className="my-2" />
             <Link
               href="/configuracoes"
+              onClick={onNavigate}
               className={cn(
                 "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
                 pathname === "/configuracoes"
@@ -103,6 +108,41 @@ export function AppSidebar() {
           Sair
         </Button>
       </div>
+    </>
+  );
+}
+
+export function MobileHeader() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="md:hidden">
+      <div className="flex items-center justify-between border-b px-4 py-3 bg-card">
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+            <BookOpen className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <span className="font-semibold text-sm">Oficina ELLP</span>
+        </div>
+        <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </Button>
+      </div>
+      {open && (
+        <div className="fixed inset-0 top-[57px] z-50 bg-background/80 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <aside className="w-64 h-full bg-card border-r flex flex-col overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <SidebarContent onNavigate={() => setOpen(false)} />
+          </aside>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export function AppSidebar() {
+  return (
+    <aside className="hidden md:flex w-64 flex-col border-r bg-card h-screen sticky top-0">
+      <SidebarContent />
     </aside>
   );
 }

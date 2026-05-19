@@ -12,6 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, BookOpen, Calendar, Users, Trash2 } from "lucide-react";
 
 interface Tutor {
@@ -129,7 +130,7 @@ export default function OficinasPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Oficinas</h1>
           <p className="text-muted-foreground">Gerencie as oficinas do projeto ELLP</p>
@@ -163,7 +164,30 @@ export default function OficinasPage() {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              {tutores.length > 0 && (
+                <div className="space-y-2">
+                  <Label>Tutores</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-md border p-3 max-h-32 overflow-y-auto">
+                    {tutores.map((t) => (
+                      <label key={t.id} className="flex items-center gap-2 text-sm cursor-pointer">
+                        <Checkbox
+                          checked={form.tutor_ids.includes(t.id)}
+                          onCheckedChange={(checked) => {
+                            setForm((prev) => ({
+                              ...prev,
+                              tutor_ids: checked
+                                ? [...prev.tutor_ids, t.id]
+                                : prev.tutor_ids.filter((id) => id !== t.id),
+                            }));
+                          }}
+                        />
+                        {t.nome}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Status</Label>
                   <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v || "planejada" })}>
@@ -180,7 +204,7 @@ export default function OficinasPage() {
                   <Input type="number" min={1} max={500} value={form.vagas} onChange={(e) => setForm({ ...form, vagas: e.target.value })} />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Data de início</Label>
                   <Input type="date" value={form.data_inicio} onChange={(e) => setForm({ ...form, data_inicio: e.target.value })} />

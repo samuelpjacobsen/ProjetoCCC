@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar, MobileHeader } from "@/components/app-sidebar";
 import { Loader2 } from "lucide-react";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
@@ -27,9 +27,12 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   if (!user) return null;
 
   return (
-    <div className="flex min-h-screen">
-      <AppSidebar />
-      <main className="flex-1 p-6 lg:p-8">{children}</main>
+    <div className="min-h-screen">
+      <MobileHeader />
+      <div className="flex">
+        <AppSidebar />
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+      </div>
     </div>
   );
 }

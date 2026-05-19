@@ -84,7 +84,7 @@ export default function MatriculasPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold">Matrículas</h1>
           <p className="text-muted-foreground">Vincule alunos às oficinas</p>
@@ -129,9 +129,9 @@ export default function MatriculasPage() {
 
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Select value={filter} onValueChange={(v) => setFilter(v || "all")}>
-              <SelectTrigger className="w-[250px]"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[250px]"><SelectValue placeholder="Filtrar por oficina" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as oficinas</SelectItem>
                 {oficinas.map((o) => (

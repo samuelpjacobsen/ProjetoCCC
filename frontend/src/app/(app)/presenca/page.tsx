@@ -100,7 +100,7 @@ export default function PresencaPage() {
       <Card>
         <CardContent className="pt-6">
           <div className="flex flex-wrap items-end gap-4">
-            <div className="space-y-2 flex-1 min-w-[200px]">
+            <div className="space-y-2 w-full sm:flex-1 sm:min-w-[200px]">
               <Label>Oficina</Label>
               <Select value={selectedOficina} onValueChange={(v) => setSelectedOficina(v || "")}>
                 <SelectTrigger><SelectValue placeholder="Selecione a oficina..." /></SelectTrigger>
@@ -113,7 +113,7 @@ export default function PresencaPage() {
             </div>
 
             {selectedOficina && (
-              <div className="space-y-2 flex-1 min-w-[200px]">
+              <div className="space-y-2 w-full sm:flex-1 sm:min-w-[200px]">
                 <Label>Aula</Label>
                 <Select value={selectedAula} onValueChange={(v) => setSelectedAula(v || "")}>
                   <SelectTrigger><SelectValue placeholder="Selecione a aula..." /></SelectTrigger>
