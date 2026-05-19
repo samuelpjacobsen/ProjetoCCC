@@ -24,7 +24,7 @@ interface Stats { matricula_id: string; aluno_nome: string; total_aulas: number;
 export default function PresencaPage() {
   const searchParams = useSearchParams();
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
-  const [selectedOficina, setSelectedOficina] = useState(searchParams.get("oficina") || "");
+  const [selectedOficina, setSelectedOficina] = useState("");
   const [aulas, setAulas] = useState<Aula[]>([]);
   const [selectedAula, setSelectedAula] = useState("");
   const [matriculas, setMatriculas] = useState<Matricula[]>([]);
@@ -34,7 +34,13 @@ export default function PresencaPage() {
   const [novaAulaForm, setNovaAulaForm] = useState({ data: new Date().toISOString().split("T")[0], topico: "" });
 
   useEffect(() => {
-    api.get<Oficina[]>("/oficinas").then(setOficinas).catch(() => {});
+    api.get<Oficina[]>("/oficinas").then((data) => {
+      setOficinas(data);
+      const fromUrl = searchParams.get("oficina");
+      if (fromUrl && data.some((o) => o.id === fromUrl)) {
+        setSelectedOficina(fromUrl);
+      }
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
