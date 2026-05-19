@@ -126,7 +126,11 @@ export default function OficinasPage() {
     }
   };
 
-  const formatDate = (d: string | null) => d ? new Date(d + "T12:00:00").toLocaleDateString("pt-BR") : "—";
+  const formatDate = (d: string | null) => {
+    if (!d) return "—";
+    const dateStr = d.includes("T") ? d.split("T")[0] : d;
+    return new Date(dateStr + "T12:00:00").toLocaleDateString("pt-BR");
+  };
 
   return (
     <div className="space-y-6">
