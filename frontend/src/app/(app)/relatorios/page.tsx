@@ -74,7 +74,9 @@ export default function RelatoriosPage() {
       <Card>
         <CardHeader>
           <Select value={filter} onValueChange={(v) => setFilter(v || "all")}>
-            <SelectTrigger className="w-full sm:w-[250px]"><SelectValue placeholder="Filtrar por oficina" /></SelectTrigger>
+            <SelectTrigger className="w-full sm:w-[250px]">
+              <span className="truncate">{filter === "all" ? "Todas as oficinas" : oficinas.find((o) => o.id === filter)?.nome || "Filtrar por oficina"}</span>
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todas as oficinas</SelectItem>
               {oficinas.map((o) => (

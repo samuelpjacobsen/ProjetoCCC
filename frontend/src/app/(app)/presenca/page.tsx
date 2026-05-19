@@ -109,7 +109,9 @@ export default function PresencaPage() {
             <div className="space-y-2 w-full sm:flex-1 sm:min-w-[200px]">
               <Label>Oficina</Label>
               <Select value={selectedOficina} onValueChange={(v) => setSelectedOficina(v || "")}>
-                <SelectTrigger><SelectValue placeholder="Selecione a oficina..." /></SelectTrigger>
+                <SelectTrigger>
+                  <span className="truncate">{oficinas.find((o) => o.id === selectedOficina)?.nome || "Selecione a oficina..."}</span>
+                </SelectTrigger>
                 <SelectContent>
                   {oficinas.map((o) => (
                     <SelectItem key={o.id} value={o.id}>{o.nome}</SelectItem>
@@ -122,7 +124,13 @@ export default function PresencaPage() {
               <div className="space-y-2 w-full sm:flex-1 sm:min-w-[200px]">
                 <Label>Aula</Label>
                 <Select value={selectedAula} onValueChange={(v) => setSelectedAula(v || "")}>
-                  <SelectTrigger><SelectValue placeholder="Selecione a aula..." /></SelectTrigger>
+                  <SelectTrigger>
+                    <span className="truncate">
+                      {aulas.find((a) => a.id === selectedAula)
+                        ? `${formatDate(aulas.find((a) => a.id === selectedAula)!.data)}${aulas.find((a) => a.id === selectedAula)!.topico ? ` — ${aulas.find((a) => a.id === selectedAula)!.topico}` : ""}`
+                        : "Selecione a aula..."}
+                    </span>
+                  </SelectTrigger>
                   <SelectContent>
                     {aulas.map((a) => (
                       <SelectItem key={a.id} value={a.id}>

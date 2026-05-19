@@ -102,7 +102,9 @@ export default function MatriculasPage() {
               <div className="space-y-2">
                 <Label>Aluno *</Label>
                 <Select value={form.aluno_id} onValueChange={(v) => setForm({ ...form, aluno_id: v || "" })}>
-                  <SelectTrigger><SelectValue placeholder="Selecione o aluno..." /></SelectTrigger>
+                  <SelectTrigger>
+                    <span className="truncate">{alunos.find((a) => a.id === form.aluno_id)?.nome || "Selecione o aluno..."}</span>
+                  </SelectTrigger>
                   <SelectContent>
                     {alunos.map((a) => (
                       <SelectItem key={a.id} value={a.id}>{a.nome}</SelectItem>
@@ -113,7 +115,9 @@ export default function MatriculasPage() {
               <div className="space-y-2">
                 <Label>Oficina *</Label>
                 <Select value={form.oficina_id} onValueChange={(v) => setForm({ ...form, oficina_id: v || "" })}>
-                  <SelectTrigger><SelectValue placeholder="Selecione a oficina..." /></SelectTrigger>
+                  <SelectTrigger>
+                    <span className="truncate">{oficinas.find((o) => o.id === form.oficina_id)?.nome || "Selecione a oficina..."}</span>
+                  </SelectTrigger>
                   <SelectContent>
                     {oficinas.map((o) => (
                       <SelectItem key={o.id} value={o.id}>{o.nome}</SelectItem>
@@ -131,7 +135,9 @@ export default function MatriculasPage() {
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center gap-4">
             <Select value={filter} onValueChange={(v) => setFilter(v || "all")}>
-              <SelectTrigger className="w-full sm:w-[250px]"><SelectValue placeholder="Filtrar por oficina" /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[250px]">
+                <span className="truncate">{filter === "all" ? "Todas as oficinas" : oficinas.find((o) => o.id === filter)?.nome || "Filtrar por oficina"}</span>
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todas as oficinas</SelectItem>
                 {oficinas.map((o) => (

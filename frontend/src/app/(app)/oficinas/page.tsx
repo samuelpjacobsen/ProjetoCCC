@@ -156,7 +156,9 @@ export default function OficinasPage() {
               <div className="space-y-2">
                 <Label>Professor responsável *</Label>
                 <Select value={form.professor_id} onValueChange={(v) => setForm({ ...form, professor_id: v || "" })}>
-                  <SelectTrigger><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                  <SelectTrigger>
+                    <span className="truncate">{profiles.find((p) => p.id === form.professor_id)?.nome || "Selecione..."}</span>
+                  </SelectTrigger>
                   <SelectContent>
                     {profiles.map((p) => (
                       <SelectItem key={p.id} value={p.id}>{p.nome}</SelectItem>
@@ -191,7 +193,9 @@ export default function OficinasPage() {
                 <div className="space-y-2">
                   <Label>Status</Label>
                   <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v || "planejada" })}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectTrigger>
+                      <span className="truncate">{statusLabels[form.status] || "Planejada"}</span>
+                    </SelectTrigger>
                     <SelectContent>
                       {Object.entries(statusLabels).map(([k, v]) => (
                         <SelectItem key={k} value={k}>{v}</SelectItem>
