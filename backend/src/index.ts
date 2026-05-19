@@ -34,9 +34,11 @@ app.use("/api/presencas", authMiddleware, presencasRoutes);
 app.use("/api/relatorios", authMiddleware, relatoriosRoutes);
 app.use("/api/users", authMiddleware, usersRoutes);
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando na porta ${PORT}`);
-});
+if (process.env.VERCEL !== "1") {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+  });
+}
 
 export { authMiddleware };
 export default app;
