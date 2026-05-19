@@ -46,7 +46,7 @@ router.post("/register", async (req: Request, res: Response) => {
     res.status(201).json({ user: { id: user.id, nome: user.nome, email: user.email, role }, token });
   } catch (error) {
     console.error("Erro no registro:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro no cadastro do usuário" });
   }
 });
 
@@ -85,7 +85,7 @@ router.post("/login", async (req: Request, res: Response) => {
     res.json({ user: { id: user.id, nome: user.nome, email: user.email, role }, token });
   } catch (error) {
     console.error("Erro no login:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao realizar login" });
   }
 });
 
@@ -114,7 +114,7 @@ router.get("/me", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Erro ao buscar perfil:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao buscar dados do usuário" });
   }
 });
 

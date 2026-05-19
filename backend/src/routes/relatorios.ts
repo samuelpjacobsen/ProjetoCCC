@@ -26,7 +26,7 @@ router.get("/", async (req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao gerar relatório:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao gerar relatório" });
   }
 });
 
@@ -47,7 +47,7 @@ router.get("/dashboard", async (_req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Erro ao buscar dados do dashboard:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Falha ao carregar dados do dashboard" });
   }
 });
 

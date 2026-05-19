@@ -25,7 +25,7 @@ router.get("/", async (req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao listar presenças:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Falha ao carregar presenças" });
   }
 });
 
@@ -50,7 +50,7 @@ router.post("/toggle", async (req: Request, res: Response) => {
     res.json(result.rows[0]);
   } catch (error) {
     console.error("Erro ao registrar presença:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao registrar presença" });
   }
 });
 
@@ -75,7 +75,7 @@ router.get("/stats", async (req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao buscar estatísticas:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao buscar estatísticas" });
   }
 });
 
@@ -123,7 +123,7 @@ router.post("/recalcular", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Erro ao recalcular aprovação:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao recalcular aprovação" });
   }
 });
 

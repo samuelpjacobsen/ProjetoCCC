@@ -8,8 +8,8 @@ router.get("/", async (_req: Request, res: Response) => {
     const result = await pool.query("SELECT * FROM alunos ORDER BY nome ASC");
     res.json(result.rows);
   } catch (error) {
-    console.error("Erro ao listar alunos:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Falha ao buscar lista de alunos:", error);
+    res.status(500).json({ error: "Não foi possível carregar os alunos" });
   }
 });
 
@@ -24,8 +24,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao buscar aluno:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro buscando aluno por id:", error);
+    res.status(500).json({ error: "Erro ao buscar aluno" });
   }
 });
 
@@ -47,8 +47,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao criar aluno:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro ao cadastrar aluno:", error);
+    res.status(500).json({ error: "Falha ao cadastrar aluno" });
   }
 });
 
@@ -75,8 +75,8 @@ router.put("/:id", async (req: Request, res: Response) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao atualizar aluno:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro no update do aluno:", error);
+    res.status(500).json({ error: "Erro ao atualizar dados do aluno" });
   }
 });
 
@@ -91,8 +91,8 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     res.json({ message: "Aluno removido com sucesso" });
   } catch (error) {
-    console.error("Erro ao remover aluno:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro deletando aluno:", error);
+    res.status(500).json({ error: "Não foi possível remover o aluno" });
   }
 });
 

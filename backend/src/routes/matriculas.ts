@@ -25,8 +25,8 @@ router.get("/", async (req: Request, res: Response) => {
     const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
-    console.error("Erro ao listar matrículas:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro listando matriculas:", error);
+    res.status(500).json({ error: "Erro ao carregar matrículas" });
   }
 });
 
@@ -56,8 +56,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao criar matrícula:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Falha ao matricular aluno:", error);
+    res.status(500).json({ error: "Não foi possível realizar a matrícula" });
   }
 });
 
@@ -72,8 +72,8 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     res.json({ message: "Matrícula removida com sucesso" });
   } catch (error) {
-    console.error("Erro ao remover matrícula:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro ao cancelar matricula:", error);
+    res.status(500).json({ error: "Erro ao excluir matrícula" });
   }
 });
 

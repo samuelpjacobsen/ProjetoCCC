@@ -8,8 +8,8 @@ router.get("/", async (_req: Request, res: Response) => {
     const result = await pool.query("SELECT * FROM tutores ORDER BY nome ASC");
     res.json(result.rows);
   } catch (error) {
-    console.error("Erro ao listar tutores:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro listando tutores:", error);
+    res.status(500).json({ error: "Erro ao carregar tutores" });
   }
 });
 
@@ -30,8 +30,8 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao criar tutor:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Falha ao salvar tutor:", error);
+    res.status(500).json({ error: "Erro ao criar tutor" });
   }
 });
 
@@ -58,8 +58,8 @@ router.put("/:id", async (req: Request, res: Response) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao atualizar tutor:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro atualizando tutor:", error);
+    res.status(500).json({ error: "Falha ao atualizar tutor" });
   }
 });
 
@@ -74,8 +74,8 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     res.json({ message: "Tutor removido com sucesso" });
   } catch (error) {
-    console.error("Erro ao remover tutor:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro ao excluir tutor:", error);
+    res.status(500).json({ error: "Não foi possível excluir o tutor" });
   }
 });
 

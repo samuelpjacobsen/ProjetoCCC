@@ -17,7 +17,7 @@ router.get("/", async (_req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao listar usuários:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao listar usuários" });
   }
 });
 
@@ -39,7 +39,7 @@ router.post("/:id/promote", async (req: Request, res: Response) => {
     res.json({ message: "Usuário promovido a administrador" });
   } catch (error) {
     console.error("Erro ao promover usuário:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao promover usuário" });
   }
 });
 
@@ -65,7 +65,7 @@ router.post("/:id/demote", async (req: Request, res: Response) => {
     res.json({ message: "Papel de administrador removido" });
   } catch (error) {
     console.error("Erro ao rebaixar usuário:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao alterar papel do usuário" });
   }
 });
 

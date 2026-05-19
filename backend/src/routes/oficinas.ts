@@ -22,8 +22,8 @@ router.get("/", async (_req: Request, res: Response) => {
 
     res.json(oficinas.rows);
   } catch (error) {
-    console.error("Erro ao listar oficinas:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro carregando oficinas:", error);
+    res.status(500).json({ error: "Falha ao listar oficinas" });
   }
 });
 
@@ -51,8 +51,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Erro ao buscar oficina:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Oficina nao encontrada ou erro:", error);
+    res.status(500).json({ error: "Erro ao buscar oficina" });
   }
 });
 
@@ -90,8 +90,8 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(201).json(oficina);
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error("Erro ao criar oficina:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Falha ao criar oficina:", error);
+    res.status(500).json({ error: "Não foi possível criar a oficina" });
   } finally {
     client.release();
   }
@@ -138,8 +138,8 @@ router.put("/:id", async (req: Request, res: Response) => {
     res.json(result.rows[0]);
   } catch (error) {
     await client.query("ROLLBACK");
-    console.error("Erro ao atualizar oficina:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro no update da oficina:", error);
+    res.status(500).json({ error: "Erro ao salvar alterações da oficina" });
   } finally {
     client.release();
   }
@@ -156,8 +156,8 @@ router.delete("/:id", async (req: Request, res: Response) => {
 
     res.json({ message: "Oficina removida com sucesso" });
   } catch (error) {
-    console.error("Erro ao remover oficina:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    console.error("Erro ao deletar oficina:", error);
+    res.status(500).json({ error: "Erro ao remover oficina" });
   }
 });
 

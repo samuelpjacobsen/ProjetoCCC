@@ -20,7 +20,7 @@ router.get("/", async (req: Request, res: Response) => {
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao listar aulas:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Falha ao listar aulas" });
   }
 });
 
@@ -41,7 +41,7 @@ router.post("/", async (req: Request, res: Response) => {
     res.status(201).json(result.rows[0]);
   } catch (error) {
     console.error("Erro ao criar aula:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao registrar aula" });
   }
 });
 
@@ -57,7 +57,7 @@ router.delete("/:id", async (req: Request, res: Response) => {
     res.json({ message: "Aula removida com sucesso" });
   } catch (error) {
     console.error("Erro ao remover aula:", error);
-    res.status(500).json({ error: "Erro interno do servidor" });
+    res.status(500).json({ error: "Erro ao excluir a aula" });
   }
 });
 
