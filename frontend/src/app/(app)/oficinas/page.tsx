@@ -100,14 +100,19 @@ export default function OficinasPage() {
     }
   };
 
+  const toDateInput = (d: string | null) => {
+    if (!d) return "";
+    return d.includes("T") ? d.split("T")[0] : d;
+  };
+
   const handleEdit = (oficina: Oficina) => {
     setForm({
       nome: oficina.nome,
       descricao: oficina.descricao || "",
       professor_id: oficina.professor_id || "",
       tutor_ids: oficina.tutores.map((t) => t.id),
-      data_inicio: oficina.data_inicio || "",
-      data_fim: oficina.data_fim || "",
+      data_inicio: toDateInput(oficina.data_inicio),
+      data_fim: toDateInput(oficina.data_fim),
       vagas: String(oficina.vagas),
       status: oficina.status,
     });
