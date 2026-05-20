@@ -2,7 +2,7 @@ import pool from "./connection.js";
 
 const migration = `
   DO $$ BEGIN
-    CREATE TYPE app_role AS ENUM ('admin', 'professor');
+    CREATE TYPE app_role AS ENUM ('admin', 'professor', 'tutor', 'pendente');
   EXCEPTION WHEN duplicate_object THEN NULL;
   END $$;
 
@@ -45,16 +45,6 @@ const migration = `
     updated_at TIMESTAMPTZ DEFAULT NOW()
   );
 
-  CREATE TABLE IF NOT EXISTS tutores (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nome VARCHAR(120) NOT NULL,
-    email VARCHAR(255),
-    telefone VARCHAR(20),
-    area_atuacao VARCHAR(255),
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-  );
-
   CREATE TABLE IF NOT EXISTS oficinas (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     nome VARCHAR(120) NOT NULL,
@@ -71,7 +61,7 @@ const migration = `
   CREATE TABLE IF NOT EXISTS oficina_tutores (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     oficina_id UUID NOT NULL REFERENCES oficinas(id) ON DELETE CASCADE,
-    tutor_id UUID NOT NULL REFERENCES tutores(id) ON DELETE CASCADE,
+    tutor_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE(oficina_id, tutor_id)
   );

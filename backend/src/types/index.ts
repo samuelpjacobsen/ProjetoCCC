@@ -1,4 +1,4 @@
-export type AppRole = "admin" | "professor";
+export type AppRole = "admin" | "professor" | "tutor" | "pendente";
 export type OficinaStatus = "planejada" | "em_andamento" | "concluida" | "cancelada";
 export type MatriculaStatus = "ativa" | "aprovado" | "reprovado" | "desistente";
 
@@ -24,16 +24,6 @@ export interface Aluno {
   ra: string | null;
   data_nascimento: string | null;
   observacoes: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface Tutor {
-  id: string;
-  nome: string;
-  email: string | null;
-  telefone: string | null;
-  area_atuacao: string | null;
   created_at: string;
   updated_at: string;
 }

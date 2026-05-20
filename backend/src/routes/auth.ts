@@ -37,7 +37,7 @@ router.post("/register", async (req: Request, res: Response) => {
 
     const userCount = await pool.query("SELECT COUNT(*) FROM profiles");
     const isFirstUser = parseInt(userCount.rows[0].count) === 1;
-    const role: AppRole = isFirstUser ? "admin" : "professor";
+    const role: AppRole = isFirstUser ? "admin" : "pendente";
 
     await pool.query("INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", [user.id, role]);
 
@@ -78,7 +78,7 @@ router.post("/login", async (req: Request, res: Response) => {
       "SELECT role FROM user_roles WHERE user_id = $1 LIMIT 1",
       [user.id]
     );
-    const role: AppRole = roleResult.rows[0]?.role || "professor";
+    const role: AppRole = roleResult.rows[0]?.role || "pendente";
 
     const token = generateToken({ userId: user.id, email: user.email, role });
 
@@ -110,7 +110,7 @@ router.get("/me", async (req: Request, res: Response) => {
 
     res.json({
       ...result.rows[0],
-      role: roleResult.rows[0]?.role || "professor",
+      role: roleResult.rows[0]?.role || "pendente",
     });
   } catch (error) {
     console.error("Erro ao buscar perfil:", error);

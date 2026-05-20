@@ -7,8 +7,6 @@ import { useAuth } from "@/lib/auth-context";
 import {
   LayoutDashboard,
   Users,
-  GraduationCap,
-  UserCheck,
   BookOpen,
   ClipboardList,
   CheckSquare,
@@ -23,20 +21,29 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
-const navItems = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/alunos", label: "Alunos", icon: Users },
-  { href: "/professores", label: "Professores", icon: GraduationCap },
-  { href: "/tutores", label: "Tutores", icon: UserCheck },
-  { href: "/oficinas", label: "Oficinas", icon: BookOpen },
-  { href: "/matriculas", label: "Matrículas", icon: ClipboardList },
-  { href: "/presenca", label: "Presença", icon: CheckSquare },
-  { href: "/relatorios", label: "Relatórios", icon: BarChart3 },
+type AppRole = "admin" | "professor" | "tutor" | "pendente";
+
+const allNavItems: { href: string; label: string; icon: typeof LayoutDashboard; roles: AppRole[] }[] = [
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "professor", "tutor"] },
+  { href: "/alunos", label: "Alunos", icon: Users, roles: ["admin", "professor"] },
+  { href: "/oficinas", label: "Oficinas", icon: BookOpen, roles: ["admin", "professor", "tutor"] },
+  { href: "/matriculas", label: "Matriculas", icon: ClipboardList, roles: ["admin", "professor"] },
+  { href: "/presenca", label: "Presenca", icon: CheckSquare, roles: ["admin", "professor", "tutor"] },
+  { href: "/relatorios", label: "Relatorios", icon: BarChart3, roles: ["admin", "professor", "tutor"] },
 ];
+
+const roleLabels: Record<string, string> = {
+  admin: "Administrador",
+  professor: "Professor",
+  tutor: "Tutor",
+  pendente: "Pendente",
+};
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { user, signOut } = useAuth();
+
+  const navItems = allNavItems.filter((item) => user?.role && item.roles.includes(user.role as AppRole));
 
   return (
     <>
@@ -47,7 +54,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <div>
             <h2 className="font-semibold text-sm">Oficina ELLP</h2>
-            <p className="text-xs text-muted-foreground">Gestão de Oficinas</p>
+            <p className="text-xs text-muted-foreground">Gestao de Oficinas</p>
           </div>
         </div>
       </div>
@@ -86,7 +93,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               )}
             >
               <Settings className="h-4 w-4" />
-              Configurações
+              Configuracoes
             </Link>
           </>
         )}
@@ -99,7 +106,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
           <div className="truncate">
             <p className="text-sm font-medium truncate">{user?.email}</p>
             <Badge variant="secondary" className="text-xs mt-1">
-              {user?.role === "admin" ? "Administrador" : "Professor"}
+              {roleLabels[user?.role || "pendente"]}
             </Badge>
           </div>
         </div>

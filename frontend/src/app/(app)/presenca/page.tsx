@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,8 @@ interface Presenca { matricula_id: string; presente: boolean; }
 interface Stats { matricula_id: string; aluno_nome: string; total_aulas: number; presencas: number; percentual_presenca: number; }
 
 export default function PresencaPage() {
+  const { user } = useAuth();
+  const canManage = user?.role === "admin" || user?.role === "professor";
   const searchParams = useSearchParams();
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [selectedOficina, setSelectedOficina] = useState("");
@@ -145,7 +148,7 @@ export default function PresencaPage() {
               </div>
             )}
 
-            {selectedOficina && (
+            {selectedOficina && canManage && (
               <>
                 <Button variant="outline" onClick={() => setNovaAulaOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -162,8 +165,8 @@ export default function PresencaPage() {
                         <Input type="date" value={novaAulaForm.data} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, data: e.target.value })} required />
                       </div>
                       <div className="space-y-2">
-                        <Label>Tópico</Label>
-                        <Input placeholder="Ex: Lógica condicional" value={novaAulaForm.topico} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, topico: e.target.value })} />
+                        <Label>Topico</Label>
+                        <Input placeholder="Ex: Logica condicional" value={novaAulaForm.topico} onChange={(e) => setNovaAulaForm({ ...novaAulaForm, topico: e.target.value })} />
                       </div>
                       <Button type="submit" className="w-full">Criar aula</Button>
                     </form>
@@ -244,10 +247,12 @@ export default function PresencaPage() {
                         <p className="text-xs text-muted-foreground">{s.presencas} / {s.total_aulas} aulas</p>
                       </div>
                     ))}
-                    <Button variant="outline" className="w-full mt-4" onClick={recalcular}>
-                      <Calculator className="h-4 w-4 mr-2" />
-                      Recalcular aprovação
-                    </Button>
+                    {canManage && (
+                      <Button variant="outline" className="w-full mt-4" onClick={recalcular}>
+                        <Calculator className="h-4 w-4 mr-2" />
+                        Recalcular aprovacao
+                      </Button>
+                    )}
                   </>
                 )}
               </CardContent>

@@ -1,19 +1,29 @@
 import { Router, Request, Response } from "express";
 import pool from "../database/connection.js";
+import { adminOnly } from "../middleware/auth.js";
 import type { JwtPayload } from "../types/index.js";
 
 const router = Router();
 
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
   try {
-    const result = await pool.query(`
+    const roleFilter = req.query.role as string | undefined;
+    let query = `
       SELECT p.id, p.nome, p.email,
-        COALESCE(ur.role, 'professor') AS role
+        COALESCE(ur.role, 'pendente') AS role
       FROM profiles p
       LEFT JOIN user_roles ur ON ur.user_id = p.id
-      ORDER BY p.nome ASC
-    `);
+    `;
+    const params: string[] = [];
 
+    if (roleFilter) {
+      query += ` WHERE ur.role = $1`;
+      params.push(roleFilter);
+    }
+
+    query += ` ORDER BY p.nome ASC`;
+
+    const result = await pool.query(query, params);
     res.json(result.rows);
   } catch (error) {
     console.error("Erro ao listar usuários:", error);
@@ -21,50 +31,34 @@ router.get("/", async (_req: Request, res: Response) => {
   }
 });
 
-router.post("/:id/promote", async (req: Request, res: Response) => {
+router.put("/:id/role", adminOnly, async (req: Request, res: Response) => {
   const currentUser = (req as any).user as JwtPayload;
+  const { role } = req.body;
+  const targetId = req.params.id;
 
-  if (currentUser.role !== "admin") {
-    res.status(403).json({ error: "Acesso restrito a administradores" });
+  const validRoles = ["admin", "professor", "tutor"];
+  if (!role || !validRoles.includes(role)) {
+    res.status(400).json({ error: "Papel inválido. Use: admin, professor ou tutor" });
     return;
   }
 
-  try {
-    await pool.query(
-      `INSERT INTO user_roles (user_id, role) VALUES ($1, 'admin')
-       ON CONFLICT (user_id, role) DO NOTHING`,
-      [req.params.id]
-    );
-
-    res.json({ message: "Usuário promovido a administrador" });
-  } catch (error) {
-    console.error("Erro ao promover usuário:", error);
-    res.status(500).json({ error: "Erro ao promover usuário" });
-  }
-});
-
-router.post("/:id/demote", async (req: Request, res: Response) => {
-  const currentUser = (req as any).user as JwtPayload;
-
-  if (currentUser.role !== "admin") {
-    res.status(403).json({ error: "Acesso restrito a administradores" });
-    return;
-  }
-
-  if (currentUser.userId === req.params.id) {
+  if (currentUser.userId === targetId && role !== "admin") {
     res.status(400).json({ error: "Você não pode remover seu próprio papel de admin" });
     return;
   }
 
   try {
-    await pool.query(
-      "DELETE FROM user_roles WHERE user_id = $1 AND role = 'admin'",
-      [req.params.id]
-    );
+    const existing = await pool.query("SELECT id FROM user_roles WHERE user_id = $1", [targetId]);
 
-    res.json({ message: "Papel de administrador removido" });
+    if (existing.rows.length > 0) {
+      await pool.query("UPDATE user_roles SET role = $1 WHERE user_id = $2", [role, targetId]);
+    } else {
+      await pool.query("INSERT INTO user_roles (user_id, role) VALUES ($1, $2)", [targetId, role]);
+    }
+
+    res.json({ message: `Papel alterado para ${role}` });
   } catch (error) {
-    console.error("Erro ao rebaixar usuário:", error);
+    console.error("Erro ao alterar papel:", error);
     res.status(500).json({ error: "Erro ao alterar papel do usuário" });
   }
 });

@@ -3,7 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "./api";
 
-type AppRole = "admin" | "professor";
+type AppRole = "admin" | "professor" | "tutor" | "pendente";
 
 interface User {
   id: string;

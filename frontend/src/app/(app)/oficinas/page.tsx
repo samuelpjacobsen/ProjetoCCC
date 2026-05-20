@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useAuth } from "@/lib/auth-context";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -65,6 +66,8 @@ const emptyForm = {
 };
 
 export default function OficinasPage() {
+  const { user } = useAuth();
+  const canEdit = user?.role === "admin" || user?.role === "professor";
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [tutores, setTutores] = useState<Tutor[]>([]);
@@ -74,8 +77,10 @@ export default function OficinasPage() {
 
   const load = () => {
     api.get<Oficina[]>("/oficinas").then(setOficinas).catch(() => toast.error("Erro ao carregar oficinas"));
-    api.get<Profile[]>("/users").then(setProfiles).catch(() => {});
-    api.get<Tutor[]>("/tutores").then(setTutores).catch(() => {});
+    if (canEdit) {
+      api.get<Profile[]>("/users").then(setProfiles).catch(() => {});
+      api.get<Tutor[]>("/users?role=tutor").then(setTutores).catch(() => {});
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -144,10 +149,12 @@ export default function OficinasPage() {
           <h1 className="text-3xl font-bold">Oficinas</h1>
           <p className="text-muted-foreground">Gerencie as oficinas do projeto ELLP</p>
         </div>
-        <Button onClick={() => { setForm(emptyForm); setEditId(null); setOpen(true); }}>
-          <Plus className="h-4 w-4 mr-2" />
-          Nova oficina
-        </Button>
+        {canEdit && (
+          <Button onClick={() => { setForm(emptyForm); setEditId(null); setOpen(true); }}>
+            <Plus className="h-4 w-4 mr-2" />
+            Nova oficina
+          </Button>
+        )}
         <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent className="max-w-lg">
             <DialogHeader>
@@ -276,9 +283,11 @@ export default function OficinasPage() {
                 </div>
                 <p className="text-muted-foreground">{oficina.vagas} vagas</p>
                 <div className="flex gap-2 pt-2">
-                  <Button variant="outline" size="sm" onClick={() => handleEdit(oficina)}>Editar</Button>
+                  {canEdit && (
+                    <Button variant="outline" size="sm" onClick={() => handleEdit(oficina)}>Editar</Button>
+                  )}
                   <Link href={`/presenca?oficina=${oficina.id}`}>
-                    <Button variant="outline" size="sm">Presença</Button>
+                    <Button variant="outline" size="sm">Presenca</Button>
                   </Link>
                 </div>
               </CardContent>

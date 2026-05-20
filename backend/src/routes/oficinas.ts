@@ -1,10 +1,25 @@
 import { Router, Request, Response } from "express";
 import pool from "../database/connection.js";
+import { roleMiddleware } from "../middleware/auth.js";
+import type { JwtPayload } from "../types/index.js";
 
 const router = Router();
 
-router.get("/", async (_req: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
+  const user = (req as any).user as JwtPayload;
+
   try {
+    let whereClause = "";
+    const params: string[] = [];
+
+    if (user.role === "professor") {
+      whereClause = "WHERE o.professor_id = $1";
+      params.push(user.userId);
+    } else if (user.role === "tutor") {
+      whereClause = "WHERE o.id IN (SELECT oficina_id FROM oficina_tutores WHERE tutor_id = $1)";
+      params.push(user.userId);
+    }
+
     const oficinas = await pool.query(`
       SELECT o.*,
         p.nome AS professor_nome,
@@ -15,10 +30,11 @@ router.get("/", async (_req: Request, res: Response) => {
       FROM oficinas o
       LEFT JOIN profiles p ON p.id = o.professor_id
       LEFT JOIN oficina_tutores ot ON ot.oficina_id = o.id
-      LEFT JOIN tutores t ON t.id = ot.tutor_id
+      LEFT JOIN profiles t ON t.id = ot.tutor_id
+      ${whereClause}
       GROUP BY o.id, p.nome
       ORDER BY o.created_at DESC
-    `);
+    `, params);
 
     res.json(oficinas.rows);
   } catch (error) {
@@ -39,7 +55,7 @@ router.get("/:id", async (req: Request, res: Response) => {
       FROM oficinas o
       LEFT JOIN profiles p ON p.id = o.professor_id
       LEFT JOIN oficina_tutores ot ON ot.oficina_id = o.id
-      LEFT JOIN tutores t ON t.id = ot.tutor_id
+      LEFT JOIN profiles t ON t.id = ot.tutor_id
       WHERE o.id = $1
       GROUP BY o.id, p.nome
     `, [req.params.id]);
@@ -56,8 +72,10 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/", async (req: Request, res: Response) => {
-  const { nome, descricao, professor_id, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
+router.post("/", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+  const user = (req as any).user as JwtPayload;
+  const { nome, descricao, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
+  const professor_id = user.role === "professor" ? user.userId : (req.body.professor_id || null);
 
   if (!nome || nome.length < 2) {
     res.status(400).json({ error: "Nome é obrigatório (mínimo 2 caracteres)" });
@@ -71,14 +89,13 @@ router.post("/", async (req: Request, res: Response) => {
     const result = await client.query(
       `INSERT INTO oficinas (nome, descricao, professor_id, data_inicio, data_fim, vagas, status)
        VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
-      [nome, descricao || null, professor_id || null, data_inicio || null, data_fim || null, vagas || 20, status || "planejada"]
+      [nome, descricao || null, professor_id, data_inicio || null, data_fim || null, vagas || 20, status || "planejada"]
     );
 
     const oficina = result.rows[0];
 
     if (tutor_ids && Array.isArray(tutor_ids)) {
-      const limitedTutors = tutor_ids.slice(0, 2);
-      for (const tutorId of limitedTutors) {
+      for (const tutorId of tutor_ids.slice(0, 5)) {
         await client.query(
           "INSERT INTO oficina_tutores (oficina_id, tutor_id) VALUES ($1, $2)",
           [oficina.id, tutorId]
@@ -97,12 +114,22 @@ router.post("/", async (req: Request, res: Response) => {
   }
 });
 
-router.put("/:id", async (req: Request, res: Response) => {
-  const { nome, descricao, professor_id, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
+router.put("/:id", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+  const user = (req as any).user as JwtPayload;
+  const { nome, descricao, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
+  const professor_id = user.role === "professor" ? user.userId : (req.body.professor_id || null);
 
   if (!nome || nome.length < 2) {
     res.status(400).json({ error: "Nome é obrigatório (mínimo 2 caracteres)" });
     return;
+  }
+
+  if (user.role === "professor") {
+    const check = await pool.query("SELECT professor_id FROM oficinas WHERE id = $1", [req.params.id]);
+    if (check.rows.length === 0 || check.rows[0].professor_id !== user.userId) {
+      res.status(403).json({ error: "Você só pode editar suas próprias oficinas" });
+      return;
+    }
   }
 
   const client = await pool.connect();
@@ -113,7 +140,7 @@ router.put("/:id", async (req: Request, res: Response) => {
       `UPDATE oficinas SET nome = $1, descricao = $2, professor_id = $3,
        data_inicio = $4, data_fim = $5, vagas = $6, status = $7, updated_at = NOW()
        WHERE id = $8 RETURNING *`,
-      [nome, descricao || null, professor_id || null, data_inicio || null, data_fim || null, vagas || 20, status || "planejada", req.params.id]
+      [nome, descricao || null, professor_id, data_inicio || null, data_fim || null, vagas || 20, status || "planejada", req.params.id]
     );
 
     if (result.rows.length === 0) {
@@ -125,8 +152,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     await client.query("DELETE FROM oficina_tutores WHERE oficina_id = $1", [req.params.id]);
 
     if (tutor_ids && Array.isArray(tutor_ids)) {
-      const limitedTutors = tutor_ids.slice(0, 2);
-      for (const tutorId of limitedTutors) {
+      for (const tutorId of tutor_ids.slice(0, 5)) {
         await client.query(
           "INSERT INTO oficina_tutores (oficina_id, tutor_id) VALUES ($1, $2)",
           [req.params.id, tutorId]
@@ -145,7 +171,17 @@ router.put("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+  const user = (req as any).user as JwtPayload;
+
+  if (user.role === "professor") {
+    const check = await pool.query("SELECT professor_id FROM oficinas WHERE id = $1", [req.params.id]);
+    if (check.rows.length === 0 || check.rows[0].professor_id !== user.userId) {
+      res.status(403).json({ error: "Você só pode remover suas próprias oficinas" });
+      return;
+    }
+  }
+
   try {
     const result = await pool.query("DELETE FROM oficinas WHERE id = $1 RETURNING id", [req.params.id]);
 

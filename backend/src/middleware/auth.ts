@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import type { JwtPayload } from "../types/index.js";
+import type { AppRole, JwtPayload } from "../types/index.js";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback-secret";
 
@@ -39,4 +39,28 @@ export function adminOnly(req: Request, res: Response, next: NextFunction): void
   }
 
   next();
+}
+
+export function rejectPendente(req: Request, res: Response, next: NextFunction): void {
+  const user = (req as any).user as JwtPayload;
+
+  if (user.role === "pendente") {
+    res.status(403).json({ error: "Conta aguardando aprovação do administrador" });
+    return;
+  }
+
+  next();
+}
+
+export function roleMiddleware(...roles: AppRole[]) {
+  return (req: Request, res: Response, next: NextFunction): void => {
+    const user = (req as any).user as JwtPayload;
+
+    if (!roles.includes(user.role)) {
+      res.status(403).json({ error: "Acesso não autorizado para este papel" });
+      return;
+    }
+
+    next();
+  };
 }
