@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger.js";
 import authRoutes from "./routes/auth.js";
 import alunosRoutes from "./routes/alunos.js";
 import oficinasRoutes from "./routes/oficinas.js";
@@ -22,6 +24,11 @@ app.use(express.json());
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customSiteTitle: "API Oficina ELLP",
+  customCss: ".swagger-ui .topbar { display: none }",
+}));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/alunos", authMiddleware, rejectPendente, roleMiddleware("admin", "professor"), alunosRoutes);
