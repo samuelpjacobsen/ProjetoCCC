@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { Progress, ProgressTrack, ProgressIndicator } from "@/components/ui/progress";
 import { CheckSquare, Plus, Calculator } from "lucide-react";
 
 interface Oficina { id: string; nome: string; }
@@ -236,7 +236,11 @@ export default function PresencaPage() {
                             {s.percentual_presenca}%
                           </span>
                         </div>
-                        <Progress value={s.percentual_presenca} className="h-2" />
+                        <Progress value={s.percentual_presenca}>
+                          <ProgressTrack>
+                            <ProgressIndicator className={s.percentual_presenca >= 75 ? "bg-green-500" : "bg-red-400"} />
+                          </ProgressTrack>
+                        </Progress>
                         <p className="text-xs text-muted-foreground">{s.presencas} / {s.total_aulas} aulas</p>
                       </div>
                     ))}
