@@ -25,8 +25,9 @@ router.get("/", async (req: Request, res: Response) => {
         p.nome AS professor_nome,
         COALESCE(
           json_agg(json_build_object('id', t.id, 'nome', t.nome))
-          FILTER (WHERE t.id IS NOT NULL), '[]'
-        ) AS tutores
+          FILTER (WHERE t.id IS NOT NULL), '[]'::json
+        ) AS tutores,
+        (SELECT COUNT(*)::int FROM matriculas m WHERE m.oficina_id = o.id AND m.status = 'ativa') AS matriculados
       FROM oficinas o
       LEFT JOIN profiles p ON p.id = o.professor_id
       LEFT JOIN oficina_tutores ot ON ot.oficina_id = o.id
@@ -50,8 +51,9 @@ router.get("/:id", async (req: Request, res: Response) => {
         p.nome AS professor_nome,
         COALESCE(
           json_agg(json_build_object('id', t.id, 'nome', t.nome))
-          FILTER (WHERE t.id IS NOT NULL), '[]'
-        ) AS tutores
+          FILTER (WHERE t.id IS NOT NULL), '[]'::json
+        ) AS tutores,
+        (SELECT COUNT(*)::int FROM matriculas m WHERE m.oficina_id = o.id AND m.status = 'ativa') AS matriculados
       FROM oficinas o
       LEFT JOIN profiles p ON p.id = o.professor_id
       LEFT JOIN oficina_tutores ot ON ot.oficina_id = o.id

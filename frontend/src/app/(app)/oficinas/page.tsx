@@ -31,6 +31,7 @@ interface Oficina {
   data_inicio: string | null;
   data_fim: string | null;
   vagas: number;
+  matriculados: number;
   status: string;
 }
 
@@ -281,7 +282,10 @@ export default function OficinasPage() {
                   <Calendar className="h-4 w-4" />
                   <span>{formatDate(oficina.data_inicio)} — {formatDate(oficina.data_fim)}</span>
                 </div>
-                <p className="text-muted-foreground">{oficina.vagas} vagas</p>
+                <p className="text-muted-foreground">
+                  {oficina.vagas - oficina.matriculados} vagas restantes
+                  <span className="text-xs ml-1">({oficina.matriculados}/{oficina.vagas})</span>
+                </p>
                 <div className="flex gap-2 pt-2">
                   {canEdit && (
                     <Button variant="outline" size="sm" onClick={() => handleEdit(oficina)}>Editar</Button>
