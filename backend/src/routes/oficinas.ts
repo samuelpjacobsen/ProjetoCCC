@@ -72,10 +72,10 @@ router.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.post("/", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+router.post("/", roleMiddleware("admin", "professor", "tutor"), async (req: Request, res: Response) => {
   const user = (req as any).user as JwtPayload;
   const { nome, descricao, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
-  const professor_id = user.role === "professor" ? user.userId : (req.body.professor_id || null);
+  const professor_id = req.body.professor_id || null;
 
   if (!nome || nome.length < 2) {
     res.status(400).json({ error: "Nome é obrigatório (mínimo 2 caracteres)" });
@@ -114,10 +114,10 @@ router.post("/", roleMiddleware("admin", "professor"), async (req: Request, res:
   }
 });
 
-router.put("/:id", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+router.put("/:id", roleMiddleware("admin", "professor", "tutor"), async (req: Request, res: Response) => {
   const user = (req as any).user as JwtPayload;
   const { nome, descricao, tutor_ids, data_inicio, data_fim, vagas, status } = req.body;
-  const professor_id = user.role === "professor" ? user.userId : (req.body.professor_id || null);
+  const professor_id = req.body.professor_id || null;
 
   if (!nome || nome.length < 2) {
     res.status(400).json({ error: "Nome é obrigatório (mínimo 2 caracteres)" });
@@ -128,6 +128,17 @@ router.put("/:id", roleMiddleware("admin", "professor"), async (req: Request, re
     const check = await pool.query("SELECT professor_id FROM oficinas WHERE id = $1", [req.params.id]);
     if (check.rows.length === 0 || check.rows[0].professor_id !== user.userId) {
       res.status(403).json({ error: "Você só pode editar suas próprias oficinas" });
+      return;
+    }
+  }
+
+  if (user.role === "tutor") {
+    const check = await pool.query(
+      "SELECT id FROM oficina_tutores WHERE oficina_id = $1 AND tutor_id = $2",
+      [req.params.id, user.userId]
+    );
+    if (check.rows.length === 0) {
+      res.status(403).json({ error: "Você só pode editar oficinas das quais participa" });
       return;
     }
   }
@@ -171,13 +182,24 @@ router.put("/:id", roleMiddleware("admin", "professor"), async (req: Request, re
   }
 });
 
-router.delete("/:id", roleMiddleware("admin", "professor"), async (req: Request, res: Response) => {
+router.delete("/:id", roleMiddleware("admin", "professor", "tutor"), async (req: Request, res: Response) => {
   const user = (req as any).user as JwtPayload;
 
   if (user.role === "professor") {
     const check = await pool.query("SELECT professor_id FROM oficinas WHERE id = $1", [req.params.id]);
     if (check.rows.length === 0 || check.rows[0].professor_id !== user.userId) {
       res.status(403).json({ error: "Você só pode remover suas próprias oficinas" });
+      return;
+    }
+  }
+
+  if (user.role === "tutor") {
+    const check = await pool.query(
+      "SELECT id FROM oficina_tutores WHERE oficina_id = $1 AND tutor_id = $2",
+      [req.params.id, user.userId]
+    );
+    if (check.rows.length === 0) {
+      res.status(403).json({ error: "Você só pode remover oficinas das quais participa" });
       return;
     }
   }

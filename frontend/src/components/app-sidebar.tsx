@@ -25,9 +25,9 @@ type AppRole = "admin" | "professor" | "tutor" | "pendente";
 
 const allNavItems: { href: string; label: string; icon: typeof LayoutDashboard; roles: AppRole[] }[] = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, roles: ["admin", "professor", "tutor"] },
-  { href: "/alunos", label: "Alunos", icon: Users, roles: ["admin", "professor"] },
+  { href: "/alunos", label: "Alunos", icon: Users, roles: ["admin", "professor", "tutor"] },
   { href: "/oficinas", label: "Oficinas", icon: BookOpen, roles: ["admin", "professor", "tutor"] },
-  { href: "/matriculas", label: "Matriculas", icon: ClipboardList, roles: ["admin", "professor"] },
+  { href: "/matriculas", label: "Matriculas", icon: ClipboardList, roles: ["admin", "professor", "tutor"] },
   { href: "/presenca", label: "Presenca", icon: CheckSquare, roles: ["admin", "professor", "tutor"] },
   { href: "/relatorios", label: "Relatorios", icon: BarChart3, roles: ["admin", "professor", "tutor"] },
 ];

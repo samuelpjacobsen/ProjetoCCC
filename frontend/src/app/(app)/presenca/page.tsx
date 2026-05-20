@@ -24,7 +24,7 @@ interface Stats { matricula_id: string; aluno_nome: string; total_aulas: number;
 
 export default function PresencaPage() {
   const { user } = useAuth();
-  const canManage = user?.role === "admin" || user?.role === "professor";
+  const canManage = user?.role === "admin" || user?.role === "professor" || user?.role === "tutor";
   const searchParams = useSearchParams();
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [selectedOficina, setSelectedOficina] = useState("");

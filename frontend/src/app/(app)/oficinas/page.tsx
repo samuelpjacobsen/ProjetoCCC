@@ -67,7 +67,7 @@ const emptyForm = {
 
 export default function OficinasPage() {
   const { user } = useAuth();
-  const canEdit = user?.role === "admin" || user?.role === "professor";
+  const canEdit = user?.role === "admin" || user?.role === "professor" || user?.role === "tutor";
   const [oficinas, setOficinas] = useState<Oficina[]>([]);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [tutores, setTutores] = useState<Tutor[]>([]);
@@ -236,7 +236,7 @@ export default function OficinasPage() {
               </div>
               <div className="flex gap-2">
                 <Button type="submit" className="flex-1">{editId ? "Salvar" : "Criar oficina"}</Button>
-                {editId && (
+                {editId && canEdit && (
                   <Button type="button" variant="destructive" onClick={() => { setOpen(false); handleDelete(editId); }}>
                     <Trash2 className="h-4 w-4" />
                   </Button>
