@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./swagger.js";
 import authRoutes from "./routes/auth.js";
 import alunosRoutes from "./routes/alunos.js";
@@ -25,10 +24,34 @@ app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customSiteTitle: "API Oficina ELLP",
-  customCss: ".swagger-ui .topbar { display: none }",
-}));
+app.get("/api/docs/swagger.json", (_req, res) => {
+  res.json(swaggerSpec);
+});
+
+app.get("/api/docs", (_req, res) => {
+  res.setHeader("Content-Type", "text/html");
+  res.send(`<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>API Oficina ELLP</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui.css">
+  <style>body{margin:0} .topbar{display:none}</style>
+</head>
+<body>
+  <div id="swagger-ui"></div>
+  <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    SwaggerUIBundle({
+      url: '/api/docs/swagger.json',
+      dom_id: '#swagger-ui',
+      presets: [SwaggerUIBundle.presets.apis, SwaggerUIBundle.SwaggerUIStandalonePreset],
+      layout: 'BaseLayout'
+    });
+  </script>
+</body>
+</html>`);
+});
 
 app.use("/api/auth", authRoutes);
 app.use("/api/alunos", authMiddleware, rejectPendente, roleMiddleware("admin", "professor"), alunosRoutes);
